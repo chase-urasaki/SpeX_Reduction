@@ -12,9 +12,10 @@ def get_flats():
     #for file in directory open object header and search for 'Flat' 
 
 # Call routine to get biases and median combine 
+def get_biases(): 
 
 # Call routine to get darks and median combine (also determine if you're doing the "fast or slow method")
-
+def get_darks()
 # bad pixel masking/Cosmic ray correction? 
 
 # Wavelength Calibration/solution
