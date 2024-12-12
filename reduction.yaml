@@ -1,0 +1,38 @@
+# Input Data Parameters
+input:
+  data_directory: "./data/raw/"  # Directory containing raw spectral files
+  file_extension: ".fits"       # File extension of input spectra
+
+# Calibration Files
+calibration:
+  bias: "./data/calibration/bias.fits"         # Bias frame
+  dark: "./data/calibration/dark.fits"         # Dark frame
+  flat: "./data/calibration/flat.fits"         # Flat field frame
+  wavelength_solution: "./data/calibration/wavelength_solution.fits" # Wavelength calibration
+
+# Reduction Steps
+reduction:
+  steps:
+    - "bias_subtraction"
+    - "dark_subtraction"
+    - "flat_fielding"
+    - "wavelength_calibration"
+    - "sky_subtraction"
+    - "flux_calibration"
+  output_directory: "./data/reduced/"  # Directory for reduced spectra
+
+# Visualization Settings
+visualization:
+  enable_plots: true                  # Generate plots during reduction
+  plot_directory: "./plots/"          # Save plots to this directory
+
+# Logging
+logging:
+  log_file: "./logs/reduction.log"     # Log file for the reduction process
+  verbosity: "INFO"                   # Log verbosity level (DEBUG, INFO, WARNING, ERROR)
+
+# Advanced Settings (Optional)
+advanced:
+  cosmic_ray_rejection: true          # Enable cosmic ray rejection
+  combine_orders: false               # Combine spectral orders
+  flux_unit: "erg/s/cm^2/Angstrom"   # Desired flux unit for output spectra
