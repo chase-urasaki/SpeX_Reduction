@@ -27,8 +27,7 @@ This repository contains code for reducing astronomical spectra. The pipeline wi
 Clone this repository and install the required dependencies:
 
 ```bash
-git clone https://github.com/<your-github-username>/spectral-reduction.git
-cd spectral-reduction
+git clone https://github.com/chase-urasaki/SpeX_Reduction.git
 pip install -r requirements.txt
 ```
 
