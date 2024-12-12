@@ -8,14 +8,17 @@ from astropy.io import fits
 
 
 # Call routine to get flats and median combine
-def get_flats(): 
+def get_flats():
+    for flat_frame in reduction.ini 
+    return 
     #for file in directory open object header and search for 'Flat' 
 
 # Call routine to get biases and median combine 
 def get_biases(): 
 
 # Call routine to get darks and median combine (also determine if you're doing the "fast or slow method")
-def get_darks()
+def get_darks():
+    
 # bad pixel masking/Cosmic ray correction? 
 
 # Wavelength Calibration/solution
