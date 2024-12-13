@@ -18,7 +18,7 @@ def flats_combine(flats_directory):
     # Get all FITS files in the directory
     file_list = glob.glob(os.path.join(flats_directory, "*.fits"))
     if len(file_list) == 0:
-        raise ValueError("No FITS files found in the specified directory.")
+        return None
 
     # Read the data from all files into a list
     flat_data = []
@@ -37,8 +37,10 @@ def flats_combine(flats_directory):
 flats_dir = 'HW7/flats'
 median_flat = flats_combine(flats_directory=flats_dir)
 print("Median flat created with shape:", median_flat.shape)
-#%%
 ds9(median_flat)
+
+#%%
+
 #%%
 # Call routine to get biases and median combine 
 def get_biases(): 
@@ -48,6 +50,22 @@ def get_darks():
     
 # bad pixel masking/Cosmic ray correction? 
 
+def reduce(science_directory, standards_directory, wavelength_cal):
+    # Reduce science frames 
+    science_file_list = glob.glob(os.path.join(science_directory, "*.fits"))
+    if len(science_file_list) == 0: 
+        return None
+    
+    os.makedir('reduced_science')
+    os.makedir('reduced_standards')
+    os.makedir('reduced_wavelength_cal')
+
+    
+
+
+    # Reduce standards
+     
+    # Reduce wavelength cal
 # Wavelength Calibration/solution
 def wavelength_sol(): 
     
