@@ -101,58 +101,7 @@ master_cals_directory = 'HW7/master_cals'
 
 reduce(science_directory, reduced_science_direcotry, master_cals_directory)
 #%%
-
-
-
-def get_order_traces(): 
-    #get order traces 
-     
-    # Reduce wavelength cal
-# Wavelength Calibration/solution
-def wavelength_sol(): 
-    
-    # plot of wavelength solution 
-    wavelength_sol = 
-
-    # Return accuracy 
-
-
-# Nodding subtraction 
-def nod_subtract():
-
-# call routine to perform regular sky subtraction after nodding subtraction
-def telluric_subtraction():
-    #use molecfit
-
-def flux_calibration(): 
-    # Use the standard stars 
-
-# Create trace profile 
-    # think astropy can do this 
-def get_traces():
-
-if __name__ == "__main__":
-    if len(sys.argv) <7: 
-        print("Usage: flats_dir, bias_dir, darks_dir, wavelength_sol_dir, standards_dir, science_dir")
-    
-    flats_dir = str(sys.argv[1])
-    bias_dir = str(sys.argv[2])
-    darks_dir = str(sys.argv[3])
-    wavelength_sol_dir = str(sys.argv[4])
-    standards_dir = str(sys.argv[5])
-    science_dir = str(sys.argv[6])
-
-    flats_combine(flats_directory=flats_dir)
-
-    flat_combine
-    dark_combine
-    bias_combine
-    bad_pixel_mask
-    cr_subtract 
-    reduce
-    apply_wavelength_sol
-    nod_subtract
-    sky_subtract
-    get_traces
-    
+standards_directory = 'HW7/standards'
+reduced_standards_directory = 'HW7/reduced_standards'
+reduce(standards_directory, reduced_standards_directory, master_cals_directory)
 # %%
