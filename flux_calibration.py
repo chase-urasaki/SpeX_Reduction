@@ -1,51 +1,81 @@
 #%% 
 import numpy as np 
-from sky_subtraction import sky_subtraction
 from matplotlib import pyplot as plt
 from scipy.constants import h, c, k
 
 #%%
-directory = 'HW7/reduced_standards'
+# Load in the spectra 
+science_spec = np.load('science_spec.npy')
+standard_spec = np.load('standard_spec.npy')
 
-# need sky subtracted standards as well 
-reduced_standards_dir = 'HW7/reduced_standards'
-subtraction = sky_subtraction(reduced_standards_dir)
-diff, summed_diff = subtraction.nod_pair('HW7/reduced_standards/spc0228.a_trace.fits', 'HW7/reduced_standards/spc0229.b_trace.fits')
-plt.plot(diff[:, 435] - np.mean(diff[:,435]))
-# get the averaged spectra for the standard 
+standard_spec[:,0]
+#%%
+
+def compute_response_function(standard_true, standard_observed):
+    """
+    Compute the response function using the observed and true spectrum of the standard star.
+
+    Parameters:
+    standard_observed (np.ndarray): Observed spectrum of the standard star.
+    standard_true (np.ndarray): True flux values of the standard star (known).
+
+    Returns:
+    np.ndarray: Response function (true flux / observed flux).
+    """
+    #if np.any(standard_observed == 0):
+    #    raise ValueError("Observed spectrum contains zero values.")
+    # is this the correct thing to do?
+    #standard_observed[standard_observed==0] = 1
+    response = standard_true[:,1] / standard_observed
+
+    return response 
+
+
+def flux_calibrate(target_observed, response_function):
+    """
+    Apply the response function to flux calibrate the target spectrum.
+
+    Parameters:
+    target_observed (np.ndarray): Observed spectrum of the target star.
+    response_function (np.ndarray): Response function (derived from standard star).
+
+    Returns:
+    np.ndarray: Flux-calibrated spectrum of the target star.
+    """
+    calibrated = target_observed[:,1] * response_function
+    return calibrated
+
+# flux calibrate system (eqns in homework) (maybe do this as a full function?)
+#%% 
+
+# HD 0202025 from homework/simbad
+flux_zp = 3.01e-9 # flux for Vega in AB in W/m^2/micron
+J_band_filter_cut_on = 1.17 # microns 
+J_band_fitler_cut_off = 1.33 # microns 
+
+J_band_mag_std = 6.925 # J-band mag of the standard star 
+mag_zp = 0.943 # ZP mag of vega in AB 
+
+# Compute flux of standard star 
+flux_std = flux_zp * 10**((mag_zp - J_band_mag_std) / 2.5) 
+
+#%%
+# Compute the flux through the wavelength range affected by the standard 
+inst_flux_std = 0 
+
+for idx in range(len(standard_spec)): 
+    if J_band_filter_cut_on <= standard_spec[idx, 0] <= J_band_fitler_cut_off:
+       inst_flux_std += standard_spec[idx,1]
+       #print(standard_spec[idx,:])
+
+#%%
+inst_flux_std
+
+#%%
+inst_response = flux_std / inst_flux_std
+
+science_spec[:,1] *= inst_response
+#%
+plt.plot(science_spec[:,0], science_spec[:,1])
 
 # %%
-# divide by 10 seconds 
-
-
-
-# zero_point_flux_J = 3.129e-13  # Zero-point flux for J-band in W/m^2/Hz (MKO system)
-wavelength_range = (1.17, 1.33)  # J-band range in microns
-J_magnitude = 6.92  # J-band magnitude of the standard star
-T_eff = 9700  # Effective temperature of the standard star (in K)
-
-# Wavelength grid in microns
-wl = 
-wavelengths = np.linspace(0.5, 2.9, 549)  # Example grid from 1.0 to 1.4 µm
-
-# 1. Blackbody flux (spectral energy distribution of the standard star)
-def blackbody(wavelength_micron, T):
-    wavelength_m = wavelength_micron * 1e-6  # Convert microns to meters
-    flux = (2 * h * c**2) / (wavelength_m**5) * (1 / (np.exp(h * c / (wavelength_m * k * T)) - 1))
-    return flux  # In W/m^2/m
-
-# Blackbody flux for the standard star
-bb_flux = blackbody(wavelengths, T_eff)  # In W/m^2/m
-
-# 2. Convert zero-point flux to flux density (F_lambda)
-# F_nu to F_lambda: F_lambda = F_nu * c / lambda^2
-j_band_central_wavelength = 1.25  # Central wavelength of J-band in microns
-zero_point_flux_J_lambda = zero_point_flux_J * c / (j_band_central_wavelength * 1e-6)**2  # W/m^2/m
-
-# Scale the blackbody flux in the J-band
-j_band_indices = (wavelengths >= 1.17) & (wavelengths <= 1.33)
-average_bb_flux_j_band = np.mean(bb_flux[j_band_indices])
-scaling_factor = zero_point_flux_J_lambda / average_bb_flux_j_band
-
-# Scale the entire blackbody flux
-scaled_bb_flux = bb_flux * scaling_factor

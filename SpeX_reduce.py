@@ -4,7 +4,6 @@ import numpy as np
 from astropy.io import fits
 import sys
 import glob
-import ccdproc 
 from pathlib import Path
 from matplotlib import pyplot as plt
 import os
@@ -82,8 +81,13 @@ def reduce(raw_directory, reduced_directory, master_cals_dir):
             header = hdul[0].header
 
         # Perform reduction
-        scaled_data = raw_data * (1/120)
-        reduced_data = raw_data / master_flat_data
+        if raw_directory == 'HW7/science':
+            scaled_data = raw_data * (1/120)
+        
+        elif raw_directory == 'HW7/standards':
+            scaled_data = raw_data * (1/10)
+
+        reduced_data = scaled_data / master_flat_data
 
         # Add history to header
         header.add_history('Reduced with master flat')

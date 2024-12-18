@@ -73,12 +73,48 @@ if __name__ == "__main__":
         oneD = np.sum(trace, axis = 0) 
         return oneD
 
-    spc0224a_spec = collapse(spc0224a_trace)
-    spc0225b_spec = collapse(spc0225b_trace)
-    spc0227a_spec = collapse(spc0227a_trace)
-    spc0226b_spec = collapse(spc0226b_trace)
-    plt.plot(spc0224a_spec)
-    plt.plot(spc0225b_spec)
-    plt.plot(spc0226b_spec)
-    plt.plot(spc0227a_spec)
+    spc0224a_spec = np.asarray(collapse(spc0224a_trace))
+    spc0225b_spec = np.asarray(-1*collapse(spc0225b_trace))
+    spc0227a_spec = np.asarray(collapse(spc0227a_trace))
+    spc0226b_spec = np.asarray(-1*collapse(spc0226b_trace))
+    plt.plot(spc0224a_spec, label = 'a')
+    plt.plot(spc0225b_spec, label = 'b')
+    plt.plot(spc0226b_spec, label = 'b2')
+    plt.plot(spc0227a_spec, label = 'a2')
+    plt.legend()
+
+    #%%
+    # Stack the spectra 
+    stack = np.dstack((spc0224a_spec, spc0225b_spec, spc0226b_spec, spc0227a_spec))
+    #%%
+    np.shape(stack)
+    #%%
+    median_stack = np.median(stack, axis=2)[0]
+    #%%
+    plt.plot(median_stack)
+
+
+# %%
+
+    reduced_standards_dir = 'HW7/reduced_standards'
+    stand_subtraction = sky_subtraction(reduced_standards_dir)
+        
+    # %%
+    spc0228a_trace, spc0229b_trace = subtraction.nod_pair('HW7/reduced_standards/spc0228.a_trace.fits',
+                                                        'HW7/reduced_standards/spc0229.b_trace.fits')
+    # %%
+    spc0228a_spec = np.asarray(collapse(spc0228a_trace))
+    spc0229b_spec = np.asarray(-1*collapse(spc0229b_trace))
+    plt.plot(spc0228a_spec)
+    plt.plot(spc0229b_spec)
+    # %%
+    standard_stac = np.dstack((spc0228a_spec, spc0229b_spec))
+    standard_median_stack = np.median(standard_stac, axis = 2)[0]
+
+    plt.plot(standard_median_stack)
+
+#%% 
+    # export the arrays 
+    np.save('science_fluxes.npy', median_stack)
+    np.save('standard_fluxes.npy', standard_median_stack)
 # %%
