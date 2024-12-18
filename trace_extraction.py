@@ -21,7 +21,7 @@ def write_fits(data, name, target_dir, header=None):
     """
     full_path = os.path.join(target_dir, name)
     hdu = fits.PrimaryHDU(data, header=header)
-    hdu.writeto(full_path, overwrite=True)
+    hdu.writeto(full_path, overwrite=True, output_verify='ignore')
 
 class TraceExtraction_old_Spex:
     def __init__(self, directory):
@@ -37,6 +37,7 @@ class TraceExtraction_old_Spex:
                 print(f"Removed existing trace file: {trace_file}")
             except Exception as e:
                 print(f"Error removing file {trace_file}: {e}")
+                
         self.file_list = glob.glob(os.path.join(directory, "*.fits"))
 
         if len(self.file_list) == 0:
@@ -80,7 +81,7 @@ class TraceExtraction_old_Spex:
 
 
 if __name__ == "__main__":
-    x1=380; x2=500; y1=460; y2=1000
+    x1=390; x2=482; y1=550; y2=950
 
     science_directory = "HW7/reduced_science"  # Update with the correct path\
     standard_directory = 'HW7/reduced_standards'
@@ -90,3 +91,6 @@ if __name__ == "__main__":
     stand_extractor = TraceExtraction_old_Spex(standard_directory)
     stand_extractor.manual_extraction(x1, x2, y1, y2)
 
+    cal_extractor = TraceExtraction_old_Spex('HW7/wavelength_cal')
+    cal_extractor.manual_extraction(x1,x2,y1,y2)
+# %%

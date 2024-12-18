@@ -3,11 +3,19 @@
 # Import modules 
 import numpy as np 
 from astropy.io import fits
-import sys
+import os
 import glob
 from pathlib import Path
 from matplotlib import pyplot as plt
+from astropy.stats import sigma_clip
+
 #%%
+def ds9(a):
+    """ ds9 shrotcut from Mike Bottom"""
+    fits.writeto('temp.fits', np.array(a), overwrite=True)
+    os.system('ds9 temp.fits -zoom to fit &')
+    return
+
 class sky_subtraction: 
     def __init__(self, directory): 
         """
@@ -23,23 +31,34 @@ class sky_subtraction:
         print(self.file_list)
 
     def nod_pair(self, a_trace_fits, b_trace_fits):
-        with fits.open(file) as hdul:
-                    data = hdul[0].data
-                    header = hdul[0].header
         
         with fits.open(a_trace_fits) as hdul_a: 
              a_data = hdul_a[0].data 
+
+             filtered_a_data = sigma_clip(a_data, sigma = 10)
+
              a_header = hdul_a[0].header 
+
+             #collapsed_a_data = np.sum(filtered_a_data, axis=0)
 
         with fits.open(b_trace_fits) as hdul_b: 
              b_data = hdul_b[0].data 
              b_header = hdul_b[0].header 
 
-        
-        
+             filtered_b_data = sigma_clip(b_data, sigma = 10)
+             #collapsed_b_data = np.sum(filtered_b_data, axis=0)
 
-        
-        return 
+        # Pairwise subtraction
+        diff = np.subtract(filtered_a_data, filtered_b_data)
+        ds9(diff)
+
+        #cut the diff im in two spectra 
+        split = diff.shape[0] // 2 
+
+        a_spec = diff[split:, :] 
+        b_spec = diff[:split, :]
+       
+        return a_spec, b_spec
     
     # Write a function for the other way later
 
@@ -47,4 +66,19 @@ class sky_subtraction:
 if __name__ == "__main__":
     reduced_science_dir = 'HW7/reduced_science'
     subtraction = sky_subtraction(reduced_science_dir)
+    spc0224a_trace, spc0225b_trace = subtraction.nod_pair('HW7/reduced_science/spc0224.a_trace.fits', 'HW7/reduced_science/spc0225.b_trace.fits')
+    spc0227a_trace, spc0226b_trace = subtraction.nod_pair('HW7/reduced_science/spc0227.a_trace.fits', 'HW7/reduced_science/spc0226.b_trace.fits')
+    
+    def collapse(trace): 
+        oneD = np.sum(trace, axis = 0) 
+        return oneD
+
+    spc0224a_spec = collapse(spc0224a_trace)
+    spc0225b_spec = collapse(spc0225b_trace)
+    spc0227a_spec = collapse(spc0227a_trace)
+    spc0226b_spec = collapse(spc0226b_trace)
+    plt.plot(spc0224a_spec)
+    plt.plot(spc0225b_spec)
+    plt.plot(spc0226b_spec)
+    plt.plot(spc0227a_spec)
 # %%

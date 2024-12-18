@@ -7,7 +7,7 @@ import glob
 import ccdproc 
 from pathlib import Path
 from matplotlib import pyplot as plt
-
+import os
 
 #%%
 def ds9(a):
@@ -29,15 +29,15 @@ def flats_combine(flats_directory, counts_threshold = 20000):
         with fits.open(file) as hdul:
             data = hdul[0].data  # Assuming data is in the primary HDU
             header = hdul[0].header
-            exposure_time = np.float64(header.get('ITIME') * header.get('CO_ADDS'))
-            scaled_data = data / exposure_time
+            exposure_time = 12.0 # Hard coded for now 
             flat_data.append(data)
+
 
     # Stack the arrays and compute the median along the third axis
     flat_stack = np.stack(flat_data, axis=-1)  # Create a 3D array
     val_distribution = flat_stack.flatten()
     filtered_vals = val_distribution[val_distribution > counts_threshold]
-    median_normed_flat = np.median(flat_stack, axis=-1) / np.mean(filtered_vals) # Median combine
+    median_normed_flat = np.median(flat_stack/exposure_time, axis=-1) / np.mean(filtered_vals) # Median combine
     
     return median_normed_flat
 
@@ -82,6 +82,7 @@ def reduce(raw_directory, reduced_directory, master_cals_dir):
             header = hdul[0].header
 
         # Perform reduction
+        scaled_data = raw_data * (1/120)
         reduced_data = raw_data / master_flat_data
 
         # Add history to header
