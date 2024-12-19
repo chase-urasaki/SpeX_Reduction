@@ -92,7 +92,7 @@ if __name__ == "__main__":
     median_stack = np.median(stack, axis=2)[0]
 
     #shift all values to ensure they are above 0 
-    median_stack += np.abs(np.min(median_stack))
+    #median_stack += np.abs(np.min(median_stack))
     #%%
     plt.plot(median_stack)
 
