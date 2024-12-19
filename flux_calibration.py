@@ -10,6 +10,11 @@ standard_spec = np.load('standard_spec.npy')
 
 standard_spec[:,0]
 #%%
+def blackbody(T_eff, standard_spec): 
+    """
+    Computes the blackbody temperature of a star with T_eff  over 
+    the wavelengths of the standard spectrum"""
+
 
 def compute_response_function(standard_true, standard_observed):
     """
@@ -47,6 +52,7 @@ def flux_calibrate(target_observed, response_function):
 
 # flux calibrate system (eqns in homework) (maybe do this as a full function?)
 #%% 
+plt.plot(standard_spec[:,0], standard_spec[:,1])
 
 # HD 0202025 from homework/simbad
 flux_zp = 3.01e-9 # flux for Vega in AB in W/m^2/micron
